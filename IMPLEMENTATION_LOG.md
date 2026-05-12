@@ -148,29 +148,27 @@ nix-shell     # Activate development environment
 
 1. **Product Model** (`models/product.py`)
    ```
-   - id (UUID, primary key)
+   - id (UUID string, primary key)
    - name (string, indexed)
    - description (text)
+   - category (string)
    - price (decimal)
-   - category (foreign key)
    - stock_quantity (integer)
-   - images (JSON array)
    - created_at, updated_at
    ```
 
 2. **Product Endpoints**:
    - `GET /api/v1/products?page=1&limit=20` - List products with pagination
    - `GET /api/v1/products/{id}` - Get product details
-   - `GET /api/v1/products/search?q=query` - Full-text search
-   - `GET /api/v1/products?category=electronics&min_price=100&max_price=1000` - Filtering
-   - `GET /api/v1/products?sort=price_asc` - Sorting
+   - `POST /api/v1/products/` - Create product
+   - `GET /api/v1/products?q=search` - Search by name/description
+   - `GET /api/v1/products?category=cart&min_price=5&max_price=30` - Filtering
 
 3. **Cart Implementation** (`models/cart.py`):
    ```
    - Cart per user, persisted in DB
    - CartItem (product_id, quantity)
-   - Cart totals calculated dynamically
-   - Session cart for anonymous users (localStorage backend)
+   - Cart totals calculated dynamically on read
    ```
 
 4. **Cart Endpoints**:
@@ -186,20 +184,17 @@ nix-shell     # Activate development environment
    - Connection pooling configured
 
 **Search Implementation**:
-- PostgreSQL ILIKE for substring matching
-- Ranking by relevance (title match > description match)
-- Autocomplete suggestions
+- SQLAlchemy `ilike` search on name and description
+- Category and price filters implemented
 
 **Tests**:
-- `test_products.py`: List, filter, sort, search tests
+- `test_products.py`: Create, list, and detail retrieval
 - `test_cart.py`: Add/remove/update cart operations
-- Edge cases: empty cart, out of stock, invalid quantities
-- 90%+ coverage for both modules
+- Edge cases: quantity validation and empty cart
 
 **Performance Optimizations**:
 - Database query pagination (limit, offset)
-- N+1 query prevention with eager loading
-- Result caching for product categories
+- Relationship loading minimized for cart operations
 
 **Git Commits**:
 ```
