@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict
 
 import bcrypt
@@ -21,8 +21,8 @@ def create_access_token(subject: str, expires_delta: timedelta | None = None) ->
         expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
     payload: Dict[str, Any] = {
         "sub": subject,
-        "exp": datetime.utcnow() + expires_delta,
-        "iat": datetime.utcnow(),
+        "exp": datetime.now(timezone.utc) + expires_delta,
+        "iat": datetime.now(timezone.utc),
     }
     return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
 
