@@ -221,119 +221,64 @@ nix-shell     # Activate development environment
 
 ## Week 3: Checkout & Payment Processing
 
-### Date: May 14, 2026 - Order Management & Stripe Integration
+### Date: May 14, 2026 - Order Management & Payment Processing
 
 **Objectives**:
 1. ✅ Implement order creation from cart
-2. ✅ Integrate Stripe payment processing
-3. ✅ Handle payment failures and retries
-4. ✅ Send confirmation emails
-5. ✅ Add comprehensive tests
+2. ✅ Add payment processing logic
+3. ✅ Validate inventory and line-item totals
+4. ✅ Add tests for checkout and order retrieval
 
 **Files Created/Modified**:
-- `models/order.py` - Order, OrderItem models
-- `schemas/order.py` - Order schemas
-- `services/order_service.py` - Order business logic
-- `services/payment_service.py` - Stripe integration
-- `services/email_service.py` - Email notifications
-- `tasks/email_tasks.py` - Celery async tasks
-- `api/orders.py` - Order endpoints
-- `tests/test_orders.py` - Order tests
-- `tests/test_payments.py` - Payment tests
+- `backend/app/models/order.py` - Order and OrderItem models
+- `backend/app/schemas/order.py` - Checkout and order response schemas
+- `backend/app/services/order_service.py` - Order creation and retrieval logic
+- `backend/app/services/payment_service.py` - Payment processing stub
+- `backend/app/api/orders.py` - Order endpoints
+- `backend/tests/test_orders.py` - Checkout and order flow tests
 
 **Key Implementations**:
 
-1. **Order Model** (`models/order.py`):
-   ```
-   - id (string, order-{timestamp}-{uuid})
-   - user_id (foreign key)
-   - items (relationship to OrderItem)
-   - status (pending, processing, shipped, delivered, cancelled)
-   - shipping_address (JSON)
-   - billing_address (JSON)
-   - total (decimal)
-   - tax (decimal)
-   - shipping (decimal)
-   - payment_method (relationship)
-   - created_at, updated_at
-   ```
+1. **Order Model** (`backend/app/models/order.py`):
+   - `Order` captures user, shipping, billing, status, and total amount
+   - `OrderItem` stores product details, quantity, unit price, and line total
+   - Status values: pending, processing, completed, cancelled
 
 2. **Order Endpoints**:
-   - `POST /api/v1/orders` - Create order from cart
-   - `GET /api/v1/orders` - List user orders
-   - `GET /api/v1/orders/{id}` - Get order details
-   - `PUT /api/v1/orders/{id}/status` - Update status (admin only)
+   - `POST /api/v1/orders/` - Create an order from client checkout data
+   - `GET /api/v1/orders/` - List orders for authenticated user
+   - `GET /api/v1/orders/{order_id}` - Get order details for authenticated user
 
-3. **Stripe Integration** (`services/payment_service.py`):
-   ```python
-   - Initialize Stripe client with Secret Key
-   - Create payment intent
-   - Process charges
-   - Handle 3D Secure authentication
-   - Webhook handling for payment updates
-   - Retry logic for failed payments
-   - Error mapping (card declined, insufficient funds, etc.)
-   ```
+3. **Payment Processing** (`backend/app/services/payment_service.py`):
+   - Stubbed out payment execution for testability
+   - Supports `test_card_success` for successful checkout
+   - Returns payment status and transaction ID
 
-4. **Order Creation Flow**:
-   - Validate cart not empty
-   - Check inventory availability
-   - Create payment intent with Stripe
-   - On success: Create order, update inventory, clear cart
-   - On failure: Return error, keep cart intact
+4. **Checkout Flow**:
+   - Validate requested products exist
+   - Confirm quantities are positive and stock is sufficient
+   - Calculate `total_amount` from order items
+   - Process payment before order persistence
+   - Deduct stock quantities and save order atomically
 
-5. **Email Service** (`services/email_service.py`):
-   - SendGrid integration
-   - Order confirmation email template
-   - HTML and plain text versions
-   - Async task queue (Celery + Redis)
-
-6. **Tax Calculation**:
-   - Simple tax rate (configurable)
-   - Calculated based on state
-   - Included in total
-
-7. **Shipping Calculation**:
-   - Fixed rate or weight-based
-   - Free shipping above threshold
-   - Multiple carriers support (Shippo integration ready)
-
-**Error Handling**:
-- Payment declined → user-friendly message, cart retained
-- Network timeout → retry logic
-- Stripe API down → graceful fallback
-- Invalid address → validation error
-
-**Tests**:
-- `test_orders.py`: Order creation, status updates, retrieval
-- `test_payments.py`: Stripe integration, failures, retries
-- Mock Stripe API responses
-- Edge cases: declined card, timeout, invalid address
-- 90%+ coverage
+5. **Testing**:
+   - `test_orders.py` covers checkout, order creation, list, and retrieval
+   - Integration test validates end-to-end checkout flow
+   - Uses authenticated user token and real API routes
 
 **Git Commits**:
 ```
-15. Order model and database schema
-16. Order service implementation
-17. Order API endpoints
-18. Stripe payment service integration
-19. Email service and Celery async tasks
-20. Order checkout flow (cart → payment → order)
-21. Order tests and payment tests
-22. Error handling and retry logic
+23. Order model and schema
+24. Order payment service stub
+25. Order service implementation
+26. Order API endpoints
+27. Checkout and order tests
 ```
 
-**Status**: ✅ Week 3 Complete
-- Order creation working end-to-end
-- Stripe payments integrated
-- Confirmation emails sending
-- Error handling robust
-- All tests passing
-
-**Notes on Payment Testing**:
-- Use Stripe test cards (4242 4242 4242 4242 for success)
-- Document test mode configuration
-- Production keys never in code (env variables)
+**Status**: ✅ Week 3 In Progress
+- Checkout and order creation implemented
+- Payment stub integrated
+- All targeted tests passing
 
 ---
 
