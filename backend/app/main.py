@@ -8,9 +8,10 @@ from .api.cart import router as cart_router
 from .api.orders import router as orders_router
 from .api.reviews import router as reviews_router
 from .api.users import router as users_router
+from .api.admin import router as admin_router
 from .config import settings
 from .database import engine
-from .models import user, product, cart, order, review  # noqa: F401
+from .models import user, product, cart, order, review, admin_log  # noqa: F401
 from .models.base import Base
 
 
@@ -35,6 +36,7 @@ app.include_router(cart_router, prefix="/api/v1/cart")
 app.include_router(orders_router, prefix="/api/v1/orders")
 app.include_router(reviews_router, prefix="/api/v1/reviews")
 app.include_router(users_router, prefix="/api/v1/users")
+app.include_router(admin_router, prefix="/api/v1")
 
 
 @app.on_event("startup")

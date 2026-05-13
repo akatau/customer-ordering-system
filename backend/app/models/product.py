@@ -13,6 +13,7 @@ class Product(Base):
     name = Column(String(255), nullable=False, index=True)
     description = Column(Text, nullable=True)
     category = Column(String(120), nullable=True, index=True)
+    image_url = Column(String(1024), nullable=True)
     price = Column(Numeric(10, 2), nullable=False)
     stock_quantity = Column(Numeric(10, 0), nullable=False, default=0)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
