@@ -62,3 +62,9 @@ def test_order_checkout_flow(client):
     detail = detail_response.json()
     assert detail["id"] == order["id"]
     assert detail["user_id"] == order["user_id"]
+
+    tracking_response = client.get(f"/api/v1/orders/{order['id']}/tracking", headers=headers)
+    assert tracking_response.status_code == HTTPStatus.OK
+    tracking = tracking_response.json()
+    assert tracking["order_id"] == order["id"]
+    assert "tracking_number" in tracking
