@@ -33,3 +33,17 @@ Thumbs.db
 
 # Nix build files
 result
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend build outputs
+frontend/dist/
+frontend/.vite/
+
+# Coverage reports
+coverage/
+*.lcov
