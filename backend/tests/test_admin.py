@@ -9,11 +9,6 @@ from app.core.security import create_access_token
 
 
 @pytest.fixture
-def client():
-    return TestClient(app)
-
-
-@pytest.fixture
 def admin_user(db: Session):
     """Create an admin user for testing."""
     admin = User(
@@ -25,8 +20,7 @@ def admin_user(db: Session):
         is_active=True,
     )
     db.add(admin)
-    db.commit()
-    db.refresh(admin)
+    db.flush()
     return admin
 
 
@@ -42,8 +36,7 @@ def support_user(db: Session):
         is_active=True,
     )
     db.add(support)
-    db.commit()
-    db.refresh(support)
+    db.flush()
     return support
 
 
@@ -59,8 +52,7 @@ def regular_user(db: Session):
         is_active=True,
     )
     db.add(user)
-    db.commit()
-    db.refresh(user)
+    db.flush()
     return user
 
 
@@ -75,8 +67,7 @@ def test_product(db: Session):
         stock_quantity=100,
     )
     db.add(product)
-    db.commit()
-    db.refresh(product)
+    db.flush()
     return product
 
 
@@ -92,8 +83,7 @@ def test_order(db: Session, regular_user: User, test_product: Product):
         shipping_address="123 Test St",
     )
     db.add(order)
-    db.commit()
-    db.refresh(order)
+    db.flush()
 
     order_item = OrderItem(
         order_id=order.id,
@@ -104,7 +94,7 @@ def test_order(db: Session, regular_user: User, test_product: Product):
         total_price=29.99,
     )
     db.add(order_item)
-    db.commit()
+    db.flush()
 
     return order
 

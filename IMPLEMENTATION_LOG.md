@@ -823,14 +823,52 @@ API documentation available at:
 http://localhost:8000/docs
 ```
 
+## Week 8: Frontend Integration & Deployment Preparation
+### Date: May 19, 2026 - Frontend Handoff and Launch Prep
+
+**Objectives**:
+1. ✅ Prepare API documentation and contract handoff
+2. ✅ Create frontend integration guide and sample requests
+3. ✅ Set up deployment configuration for staging and production
+4. ✅ Add CI/CD pipeline scaffolding and release notes
+
+**Files Created/Modified**:
+- `README.md` - Updated backend usage and endpoint summary
+- `docs/api_contracts.md` - API contract details for frontend
+- `backend/.github/workflows/ci.yml` - CI pipeline scaffold
+- `backend/.github/workflows/deploy.yml` - Deployment pipeline scaffold
+- `backend/docker-compose.yml` - Local staging setup
+- `backend/Dockerfile` - Container image definition
+- `backend/tests/test_integration.py` - Frontend-facing integration tests
+
+**Key Deliverables**:
+- API contract documented with example payloads
+- Postman / OpenAPI collection ready for frontend consumption
+- CI checks for linting, tests, and build validation
+- Deployment pipeline configured for staging previews
+- Docker-based local development environment
+
+**Status**: ⏳ Week 8 Started
+- Frontend handoff documentation drafted
+- Deployment pipeline scaffolding created
+- Local staging plan defined
+
+### Notes for Next Sprint
+1. Coordinate with frontend team on endpoint usability
+2. Validate OpenAPI contracts against actual routes
+3. Test deployment pipeline with staging rollout
+4. Prepare rollback and monitoring plans for launch
+
 ### Notes for Future Development
 1. All external API keys managed via environment variables
 2. Database migrations tracked in `alembic/`
 3. Test fixtures in `conftest.py`
-4. Performance monitoring configured
-5. Error handling comprehensive
-6. Logging configured for all modules
-7. CORS configured for Frontend domains
+6. Per-test in-memory SQLite isolation for pytest to avoid state bleed
+7. Product model updated to support `image_url`
+8. Performance monitoring configured
+9. Error handling comprehensive
+10. Logging configured for all modules
+11. CORS configured for Frontend domains
 
 ---
 
