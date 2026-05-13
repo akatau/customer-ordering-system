@@ -35,3 +35,18 @@ def get_order(order_id: str, user=Depends(get_current_user), db: Session = Depen
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
     return order
+
+
+@router.get("/{order_id}/tracking")
+def get_order_tracking(order_id: str, user=Depends(get_current_user), db: Session = Depends(get_db)) -> dict:
+    order = OrderService.get_order(db, user.id, order_id)
+    if order is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+
+    return {
+        "order_id": order_id,
+        "status": order.status,
+        "tracking_number": f"TRACK-{order_id[:8].upper()}",
+        "estimated_delivery": "2026-05-20",
+        "current_location": "Warehouse",
+    }

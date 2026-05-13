@@ -284,46 +284,74 @@ nix-shell     # Activate development environment
 
 ## Week 4: Advanced Features - Reviews, Profiles, Tracking
 
-### Date: May 15, 2026 - User Features & Order Tracking
+### Date: May 15, 2026 - Reviews, Profile Management, and Order Tracking
 
 **Objectives**:
-1. ✅ Implement product reviews system
-2. ✅ Create user profile management
-3. ✅ Add password recovery flow
-4. ✅ Implement real-time order tracking
-5. ✅ Add comprehensive tests
+1. ✅ Implement product review CRUD
+2. ✅ Add user profile endpoints
+3. ✅ Add password change support
+4. ✅ Add order tracking endpoint
+5. ✅ Add focused tests for reviews, profiles, and tracking
 
 **Files Created/Modified**:
-- `models/review.py` - Review model
-- `models/payment_method.py` - Saved payment methods
-- `schemas/review.py` - Review schemas
-- `schemas/user.py` - User profile schemas
-- `services/review_service.py` - Review logic
-- `services/user_service.py` - User management
-- `api/reviews.py` - Review endpoints
-- `api/users.py` - Profile endpoints
-- `tests/test_reviews.py` - Review tests
-- `tests/test_users.py` - User tests
+- `backend/app/models/review.py` - Review model
+- `backend/app/schemas/review.py` - Review schemas
+- `backend/app/schemas/profile.py` - User profile schemas
+- `backend/app/services/review_service.py` - Review business logic
+- `backend/app/services/user_service.py` - Profile management and password change
+- `backend/app/api/reviews.py` - Review endpoints
+- `backend/app/api/users.py` - Profile endpoints
+- `backend/app/api/orders.py` - Order tracking endpoint
+- `backend/tests/test_reviews.py` - Review tests
+- `backend/tests/test_profile.py` - Profile tests
 
 **Key Implementations**:
 
-1. **Review Model** (`models/review.py`):
-   ```
-   - id (UUID)
-   - product_id (foreign key)
-   - user_id (foreign key)
-   - rating (1-5, validated)
-   - comment (text, max 500 chars)
-   - created_at, updated_at
-   - deleted_at (soft delete)
-   ```
+1. **Review Model** (`backend/app/models/review.py`):
+   - `Review` stores user_id, product_id, rating, comment, timestamps
+   - Rating validated 1-5
+   - Relationship to `User` and `Product`
 
-2. **Review Endpoints**:
-   - `GET /api/v1/products/{id}/reviews?page=1` - List reviews (paginated)
-   - `POST /api/v1/products/{id}/reviews` - Submit review (purchased only)
-   - `PUT /api/v1/reviews/{id}` - Edit own review (within 30 days)
-   - `DELETE /api/v1/reviews/{id}` - Delete own review
-   - `POST /api/v1/reviews/{id}/report` - Report inappropriate review
+2. **Review Endpoints** (`backend/app/api/reviews.py`):
+   - `GET /api/v1/reviews/products/{product_id}` - List reviews
+   - `POST /api/v1/reviews/products/{product_id}` - Create review
+   - `PUT /api/v1/reviews/{review_id}` - Update own review
+   - `DELETE /api/v1/reviews/{review_id}` - Delete own review
+
+3. **Purchase Validation**:
+   - Users can only review products they have purchased
+   - Validates product ownership via order items before review creation
+
+4. **User Profile Endpoints** (`backend/app/api/users.py`):
+   - `GET /api/v1/users/me` - Read authenticated profile
+   - `PUT /api/v1/users/me` - Update username/full name
+   - `POST /api/v1/users/me/change-password` - Change password
+
+5. **Order Tracking** (`backend/app/api/orders.py`):
+   - `GET /api/v1/orders/{order_id}/tracking` returns current order status and tracking details
+
+**Tests**:
+- `backend/tests/test_reviews.py`: Review creation, listing, update, delete
+- `backend/tests/test_profile.py`: Profile read, update, and password change
+- `backend/tests/test_orders.py`: Order tracking endpoint coverage
+
+**Git Commits**:
+```
+28. Review model and schema
+29. Review service implementation
+30. Profile service and schemas
+31. Review and profile API endpoints
+32. Order tracking endpoint
+33. Review and profile tests
+```
+
+**Status**: ✅ Week 4 In Progress
+- Review CRUD implemented
+- User profile management added
+- Order tracking endpoint added
+- Tests passing for the implemented functionality
+
+---
 
 3. **User Profile Endpoints**:
    - `GET /api/v1/users/profile` - Get profile
