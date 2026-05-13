@@ -3,6 +3,7 @@ from datetime import datetime
 from enum import Enum as PyEnum
 from sqlalchemy import Boolean, Column, DateTime, String, Text
 from sqlalchemy.types import Enum as SqlEnum
+from sqlalchemy.orm import relationship
 
 from .base import Base
 
@@ -25,3 +26,6 @@ class User(Base):
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    
+    # Relationships
+    tickets = relationship("Ticket", foreign_keys="Ticket.user_id", back_populates="user")

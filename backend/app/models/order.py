@@ -27,6 +27,7 @@ class Order(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
+    support_tickets = relationship("Ticket", back_populates="order")
 
 
 class OrderItem(Base):
