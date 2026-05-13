@@ -892,3 +892,8 @@ http://localhost:8000/docs
 3. Add reporting endpoints and asynchronous report generation
 4. Update backend API documentation for new support/reporting features
 5. Create tests covering support, refunds, and reports
+
+### Notes
+- Backend tests currently pass (26/26) on `main` and `feature/backend-week6-support-reporting`.
+- Observed deprecation warnings during test runs for Pydantic `from_orm` and timezone-aware datetime handling.
+- These warnings should be addressed in the next sprint as part of backend modernization and dependency hygiene.
