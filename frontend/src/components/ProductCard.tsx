@@ -6,7 +6,7 @@ import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
-import type { Product } from '@/types
+import type { Product } from '@/types'
 import { formatPrice, truncateText } from '@utils/helpers'
 
 interface Props {
