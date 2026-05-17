@@ -24,6 +24,8 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.11']
+    env:
+      PYTHONPATH: ${{ github.workspace }}/backend
 
     steps:
     - uses: actions/checkout@v3
@@ -53,7 +55,7 @@ jobs:
     - name: Run tests with pytest
       run: |
         cd backend
-        PYTHONPATH=$PWD pytest tests/ -v --cov=app --cov-report=xml --cov-report=html --cov-report=term
+        pytest tests/ -v --cov=app --cov-report=xml --cov-report=html --cov-report=term
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
