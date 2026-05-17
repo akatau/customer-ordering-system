@@ -8,12 +8,27 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import type { Product } from '@/types'
 import { formatPrice, truncateText } from '@utils/helpers'
+import { useCartStore } from '@store/cart'
+import { useState } from 'react'
 
 interface Props {
   product: Product
 }
 
 export function ProductCard({ product }: Props) {
+  const [isAdding, setIsAdding] = useState(false)
+  const addItem = useCartStore((state) => state.addItem)
+  const isInStock = product.stock_quantity > 0
+
+  const handleAddToCart = async () => {
+    setIsAdding(true)
+    try {
+      await addItem(product.id, 1)
+    } finally {
+      setIsAdding(false)
+    }
+  }
+
   return (
     <Card>
       <CardActionArea component={RouterLink} to={`/products/${product.id}`}>
@@ -27,13 +42,18 @@ export function ProductCard({ product }: Props) {
           </Typography>
         </CardContent>
       </CardActionArea>
-      <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>
           {formatPrice(product.price)}
         </Typography>
-        <Button size="small" variant="contained" component={RouterLink} to={`/products/${product.id}`}>
-          View
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button size="small" variant="outlined" component={RouterLink} to={`/products/${product.id}`}>
+            View
+          </Button>
+          <Button size="small" variant="contained" onClick={handleAddToCart} disabled={isAdding || !isInStock}>
+            {isAdding ? 'Adding...' : 'Add to Cart'}
+          </Button>
+        </Box>
       </Box>
     </Card>
   )

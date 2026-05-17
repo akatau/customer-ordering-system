@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
@@ -33,6 +33,7 @@ export function CheckoutPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<CheckoutForm>({
@@ -59,16 +60,11 @@ export function CheckoutPage() {
     }
 
     try {
+      const shippingAddress = `${data.street}, ${data.city}, ${data.state} ${data.zipCode}, ${data.country}`
       const order = await orderService.createOrder({
         items: cart.items.map((item) => ({ product_id: item.product_id, quantity: item.quantity })),
-        shipping_address: {
-          street: data.street,
-          city: data.city,
-          state: data.state,
-          zip_code: data.zipCode,
-          country: data.country,
-        },
-        payment_method_id: data.paymentMethod,
+        shipping_address: shippingAddress,
+        payment_method: data.paymentMethod,
       })
       setSuccessMessage(`Order ${order.order_number} created successfully.`)
       navigate('/orders')
@@ -115,10 +111,16 @@ export function CheckoutPage() {
             <TextField label="Country" fullWidth {...register('country', { required: true })} error={Boolean(errors.country)} helperText={errors.country && 'Required'} />
           </Grid>
           <Grid item xs={12}>
-            <TextField select label="Payment Method" fullWidth {...register('paymentMethod')}>
-              <MenuItem value="credit_card">Credit Card</MenuItem>
-              <MenuItem value="paypal">PayPal</MenuItem>
-            </TextField>
+            <Controller
+              name="paymentMethod"
+              control={control}
+              render={({ field }) => (
+                <TextField select label="Payment Method" fullWidth {...field}>
+                  <MenuItem value="credit_card">Credit Card</MenuItem>
+                  <MenuItem value="paypal">PayPal</MenuItem>
+                </TextField>
+              )}
+            />
           </Grid>
         </Grid>
 

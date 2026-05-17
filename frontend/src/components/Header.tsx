@@ -1,89 +1,42 @@
-import { useState, type MouseEvent } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
-import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
-import Toolbar from '@mui/material/Toolbar'
-import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
-import Badge from '@mui/material/Badge'
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
 import { useAuthStore } from '@store/auth'
-import { useCartStore } from '@store/cart'
 
 export function Header() {
   const navigate = useNavigate()
-  const { isAuthenticated, user, logout } = useAuthStore()
-  const cartCount = useCartStore((state) => state.getItemCount())
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
-  const handleMenuOpen = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
+  const { isAuthenticated, logout } = useAuthStore()
 
   const handleLogout = async () => {
     await logout()
-    navigate('/')
+    navigate('/login')
   }
 
   return (
-    <AppBar position="static" color="primary">
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography variant="h6" component={RouterLink} to="/" sx={{ color: 'inherit', textDecoration: 'none' }}>
-            Customer Ordering
-          </Typography>
-          <Button color="inherit" component={RouterLink} to="/products">
-            Products
-          </Button>
-        </Box>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton color="inherit" component={RouterLink} to="/cart" aria-label="Cart">
-            <Badge badgeContent={cartCount} color="secondary">
-              <ShoppingCartIcon />
-            </Badge>
-          </IconButton>
-
+    <header style={{ background: '#1976d2', color: 'white', padding: '12px 20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontWeight: 700 }}>Customer Ordering</div>
+        <nav style={{ display: 'flex', gap: 12 }}>
+          <RouterLink to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products</RouterLink>
+          <RouterLink to="/cart" style={{ color: 'white', textDecoration: 'none' }}>Cart</RouterLink>
           {isAuthenticated ? (
-            <>
-              <Button color="inherit" startIcon={<AccountCircleIcon />} onClick={handleMenuOpen}>
-                {user?.name ?? 'Account'}
-              </Button>
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                <MenuItem component={RouterLink} to="/profile" onClick={handleMenuClose}>
-                  Profile
-                </MenuItem>
-                <MenuItem component={RouterLink} to="/orders" onClick={handleMenuClose}>
-                  Orders
-                </MenuItem>
-                {user?.role === 'admin' && (
-                  <MenuItem component={RouterLink} to="/admin" onClick={handleMenuClose}>
-                    Admin Dashboard
-                  </MenuItem>
-                )}
-                {user?.role === 'support' && (
-                  <MenuItem component={RouterLink} to="/support" onClick={handleMenuClose}>
-                    Support Dashboard
-                  </MenuItem>
-                )}
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
-              </Menu>
-            </>
+            <button
+              type="button"
+              onClick={handleLogout}
+              style={{
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.8)',
+                color: 'white',
+                borderRadius: 6,
+                padding: '6px 12px',
+                cursor: 'pointer',
+              }}
+            >
+              Logout
+            </button>
           ) : (
-            <Button color="inherit" component={RouterLink} to="/login">
-              Login
-            </Button>
+            <RouterLink to="/login" style={{ color: 'white', textDecoration: 'none' }}>Login</RouterLink>
           )}
-        </Box>
-      </Toolbar>
-    </AppBar>
+        </nav>
+      </div>
+    </header>
   )
 }

@@ -8,6 +8,7 @@ class ProductBase(BaseModel):
     name: str
     description: str | None = None
     category: str | None = None
+    image_url: str | None = None
     price: Decimal
     stock_quantity: int
 

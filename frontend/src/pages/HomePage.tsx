@@ -27,9 +27,9 @@ export function HomePage() {
 
   useEffect(() => {
     if (debouncedSearch && debouncedSearch.length > 2) {
-      searchProducts(debouncedSearch)
+      searchProducts(debouncedSearch, sort)
     } else {
-      fetchProducts(1, category, sort ? undefined : undefined, sort)
+      fetchProducts(1, category, undefined, sort)
     }
   }, [debouncedSearch, category, sort])
 

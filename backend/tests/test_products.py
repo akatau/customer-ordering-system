@@ -16,6 +16,7 @@ def test_list_and_create_product(client):
     assert created["name"] == product_payload["name"]
     assert created["category"] == product_payload["category"]
     assert created["stock_quantity"] == product_payload["stock_quantity"]
+    assert created["image_url"] is None
 
     list_response = client.get("/api/v1/products/?page=1&limit=10")
     assert list_response.status_code == HTTPStatus.OK

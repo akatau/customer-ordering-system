@@ -75,9 +75,9 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: true })
     try {
       await cartService.clearCart()
-      set({ cart: null, isLoading: false })
+      set({ cart: { items: [], subtotal: 0, tax: 0, shipping: 0, total: 0 }, isLoading: false })
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Failed to clear cart' })
+      set({ error: error instanceof Error ? error.message : 'Failed to clear cart', isLoading: false })
       throw error
     }
   },

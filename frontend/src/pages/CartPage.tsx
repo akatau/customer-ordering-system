@@ -1,18 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { LoadingIndicator } from '@components/LoadingIndicator'
 import { PageContainer } from '@components/PageContainer'
 import { useCartStore } from '@store/cart'
@@ -41,42 +30,36 @@ export function CartPage() {
         <Typography>Your cart is empty.</Typography>
       ) : (
         <>
-          <TableContainer component={Paper} sx={{ mb: 3 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Product</TableCell>
-                  <TableCell>Price</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Subtotal</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {cart.items.map((item) => (
-                  <TableRow key={item.product_id}>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{formatPrice(item.price)}</TableCell>
-                    <TableCell>
-                      <TextField
-                        type="number"
-                        value={item.quantity}
-                        onChange={(event) => updateItem(item.product_id, Number(event.target.value))}
-                        inputProps={{ min: 1 }}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>{formatPrice(item.subtotal)}</TableCell>
-                    <TableCell align="right">
-                      <IconButton onClick={() => removeItem(item.product_id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Box sx={{ mb: 3, border: '1px solid #ddd', borderRadius: 2, overflow: 'hidden' }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: 2, p: 2, background: '#f7f7f7', fontWeight: 700 }}>
+              <div>Product</div>
+              <div>Price</div>
+              <div>Quantity</div>
+              <div>Subtotal</div>
+              <div>Actions</div>
+            </Box>
+            {cart.items.map((item) => (
+              <Box key={item.product_id} sx={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: 2, p: 2, borderTop: '1px solid #eee', alignItems: 'center' }}>
+                <div>{item.name}</div>
+                <div>{formatPrice(item.price)}</div>
+                <input
+                  type="number"
+                  value={item.quantity}
+                  min={1}
+                  onChange={(event) => updateItem(item.product_id, Number(event.target.value))}
+                  style={{ width: 80, padding: '6px 8px' }}
+                />
+                <div>{formatPrice(item.subtotal)}</div>
+                <button
+                  type="button"
+                  onClick={() => removeItem(item.product_id)}
+                  style={{ border: '1px solid #ccc', borderRadius: 6, padding: '6px 10px', background: 'white', cursor: 'pointer' }}
+                >
+                  Remove
+                </button>
+              </Box>
+            ))}
+          </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
             <Box>
@@ -89,12 +72,20 @@ export function CartPage() {
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-              <Button variant="outlined" color="secondary" onClick={() => clearCart()}>
+              <button
+                type="button"
+                onClick={() => clearCart()}
+                style={{ border: '1px solid #b71c1c', color: '#b71c1c', background: 'white', borderRadius: 6, padding: '10px 14px', cursor: 'pointer' }}
+              >
                 Clear Cart
-              </Button>
-              <Button variant="contained" onClick={() => navigate('/checkout')}>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/checkout')}
+                style={{ border: 'none', color: 'white', background: '#1976d2', borderRadius: 6, padding: '10px 14px', cursor: 'pointer' }}
+              >
                 Proceed to Checkout
-              </Button>
+              </button>
             </Box>
           </Box>
         </>

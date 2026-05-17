@@ -14,6 +14,7 @@ import { formatPrice, formatDate } from '@utils/helpers'
 export function OrdersPage() {
   const navigate = useNavigate()
   const { orders, isLoading, error, fetchOrders } = useOrdersStore()
+  const safeOrders = Array.isArray(orders) ? orders : []
 
   useEffect(() => {
     fetchOrders()
@@ -29,11 +30,11 @@ export function OrdersPage() {
         Your Orders
       </Typography>
       {error && <Typography color="error">{error}</Typography>}
-      {orders.length === 0 ? (
+      {safeOrders.length === 0 ? (
         <Typography>No orders found.</Typography>
       ) : (
         <List>
-          {orders.map((order) => (
+          {safeOrders.map((order) => (
             <Paper key={order.id} sx={{ mb: 2, p: 2 }}>
               <ListItem secondaryAction={<Button onClick={() => navigate(`/orders/${order.id}`)}>View</Button>}>
                 <ListItemText

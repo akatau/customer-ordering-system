@@ -11,7 +11,7 @@ interface ProductsParams {
 
 export const productService = {
   async getProducts(params?: ProductsParams): Promise<PaginatedResponse<Product>> {
-    const response = await apiClient.getInstance().get('/products', { params })
+    const response = await apiClient.getInstance().get('/products/', { params })
     return response.data
   },
 
@@ -25,11 +25,19 @@ export const productService = {
     return response.data
   },
 
-  async searchProducts(query: string, limit?: number): Promise<Product[]> {
-    const response = await apiClient.getInstance().get('/products/search', {
-      params: { q: query, limit: limit || 10 },
-    })
-    return response.data
+  async searchProducts(query: string, limit?: number, sort?: string): Promise<Product[]> {
+    try {
+      const response = await apiClient.getInstance().get('/products/search', {
+        params: { q: query, limit: limit || 10, sort },
+      })
+      return response.data
+    } catch (error) {
+      // Fallback for older backends that don't expose /products/search.
+      const response = await apiClient.getInstance().get('/products/', {
+        params: { q: query, limit: limit || 10, sort },
+      })
+      return response.data.data ?? response.data ?? []
+    }
   },
 
   async addReview(productId: string, data: { rating: number; comment: string }): Promise<Review> {

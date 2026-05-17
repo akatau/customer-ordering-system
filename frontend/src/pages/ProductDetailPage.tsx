@@ -33,6 +33,8 @@ export function ProductDetailPage() {
     navigate('/cart')
   }
 
+  const isInStock = (selectedProduct?.stock_quantity ?? 0) > 0
+
   if (isLoading) {
     return <LoadingIndicator />
   }
@@ -76,7 +78,7 @@ export function ProductDetailPage() {
         <Grid item xs={12} md={6}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="subtitle1">Category: {selectedProduct.category}</Typography>
-            <Typography>Stock: {selectedProduct.in_stock ? 'Available' : 'Out of stock'}</Typography>
+            <Typography>Stock: {isInStock ? 'Available' : 'Out of stock'}</Typography>
             <TextField
               label="Quantity"
               type="number"
@@ -85,7 +87,7 @@ export function ProductDetailPage() {
               inputProps={{ min: 1, max: selectedProduct.stock_quantity }}
               fullWidth
             />
-            <Button variant="contained" size="large" onClick={handleAddToCart} disabled={!selectedProduct.in_stock}>
+            <Button variant="contained" size="large" onClick={handleAddToCart} disabled={!isInStock}>
               Add to Cart
             </Button>
           </Box>
