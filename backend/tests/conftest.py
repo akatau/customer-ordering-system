@@ -6,13 +6,22 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.pool import StaticPool
+from fastapi.testclient import TestClient
+
+from app.main import app
+from app.database import get_db
 from app.models import Base, User, Product, Order, OrderItem
 from app.services.auth_service import hash_password
 
 @pytest.fixture(scope="function")
 def db_engine():
     """Create an in-memory SQLite database for testing"""
-    engine = create_engine("sqlite:///:memory:")
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     Base.metadata.create_all(engine)
     yield engine
     engine.dispose()
@@ -20,15 +29,36 @@ def db_engine():
 @pytest.fixture(scope="function")
 def db_session(db_engine):
     """Create a fresh database session for each test"""
-    connection = db_engine.connect()
-    transaction = connection.begin()
-    session = sessionmaker(bind=connection)()
+    SessionLocal = sessionmaker(bind=db_engine, autoflush=False, autocommit=False)
+    session = SessionLocal()
     
     yield session
     
     session.close()
-    transaction.rollback()
-    connection.close()
+
+
+@pytest.fixture(scope="function")
+def db(db_session):
+    """Alias used by API tests."""
+    return db_session
+
+
+@pytest.fixture(scope="function")
+def client(db_engine):
+    """FastAPI test client backed by the in-memory test database."""
+    TestingSessionLocal = sessionmaker(bind=db_engine, autoflush=False, autocommit=False)
+
+    def override_get_db():
+        session = TestingSessionLocal()
+        try:
+            yield session
+        finally:
+            session.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    with TestClient(app) as test_client:
+        yield test_client
+    app.dependency_overrides.clear()
 
 @pytest.fixture
 def admin_user(db_session):
