@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile for FastAPI backend
 # Stage 1: Builder
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
@@ -34,7 +34,7 @@ ENV PATH=/root/.local/bin:$PATH \
     PYTHONPATH=/app
 
 # Copy application code
-COPY . .
+COPY backend/app ./app
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
