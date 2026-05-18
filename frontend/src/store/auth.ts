@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { User, AuthResponse } from '@/types'
+import type { User } from '@/types'
 import { authService } from '@services/auth'
 
 interface AuthState {
@@ -10,7 +10,7 @@ interface AuthState {
   isLoading: boolean
   error: string | null
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, name: string) => Promise<void>
+  register: (email: string, password: string, username: string, fullName?: string) => Promise<void>
   logout: () => Promise<void>
   setUser: (user: User | null) => void
   clearError: () => void
@@ -28,10 +28,11 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null })
         try {
-          const response: AuthResponse = await authService.login({ email, password })
+          const response = await authService.login({ email, password })
+          set({ token: response.access_token })
+          const user = await authService.getCurrentUser()
           set({
-            user: response.user,
-            token: response.access_token,
+            user,
             isAuthenticated: true,
             isLoading: false,
           })
@@ -44,10 +45,10 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      register: async (email: string, password: string, name: string) => {
+      register: async (email: string, password: string, username: string, fullName?: string) => {
         set({ isLoading: true, error: null })
         try {
-          await authService.register({ email, password, name })
+          await authService.register({ email, password, username, full_name: fullName })
           set({ isLoading: false })
         } catch (error) {
           set({

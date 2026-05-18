@@ -42,7 +42,4 @@ app.include_router(admin_router, prefix="/api/v1")
 
 @app.on_event("startup")
 def startup_event():
-    # Avoid forcing a PostgreSQL connection during test startup.
-    # Test fixtures create the in-memory schema themselves.
-    if settings.database_url.startswith("sqlite"):
-        Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)

@@ -11,8 +11,6 @@ export interface User {
 export interface AuthResponse {
   access_token: string
   token_type: string
-  expires_in: number
-  user: User
 }
 
 export interface LoginRequest {
@@ -23,7 +21,8 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string
   password: string
-  name: string
+  username: string
+  full_name?: string
 }
 
 // Product Types

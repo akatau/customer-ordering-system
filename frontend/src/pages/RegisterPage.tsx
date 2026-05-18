@@ -9,7 +9,8 @@ import { useAuthStore } from '@store/auth'
 import { PageContainer } from '@components/PageContainer'
 
 interface RegisterForm {
-  name: string
+  username: string
+  fullName?: string
   email: string
   password: string
 }
@@ -24,7 +25,7 @@ export function RegisterPage() {
   } = useForm<RegisterForm>()
 
   const onSubmit = async (data: RegisterForm) => {
-    await signup(data.email, data.password, data.name)
+    await signup(data.email, data.password, data.username, data.fullName)
     clearError()
     navigate('/login')
   }
@@ -36,7 +37,8 @@ export function RegisterPage() {
       </Typography>
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'grid', gap: 2, maxWidth: 480 }}>
-        <TextField label="Name" fullWidth {...register('name', { required: true })} error={Boolean(errors.name)} helperText={errors.name && 'Name is required'} />
+        <TextField label="Username" fullWidth {...register('username', { required: true })} error={Boolean(errors.username)} helperText={errors.username && 'Username is required'} />
+        <TextField label="Full Name" fullWidth {...register('fullName')} />
         <TextField label="Email" type="email" fullWidth {...register('email', { required: true })} error={Boolean(errors.email)} helperText={errors.email && 'Email is required'} />
         <TextField label="Password" type="password" fullWidth {...register('password', { required: true, minLength: 8 })} error={Boolean(errors.password)} helperText={errors.password ? 'Password is required and must be at least 8 characters' : ''} />
         <Button type="submit" variant="contained" disabled={isLoading}>

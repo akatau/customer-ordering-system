@@ -31,3 +31,8 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)) -> Token:
         return Token(access_token=access_token)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(exc)) from exc
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT, tags=["Authentication"])
+def logout_user() -> None:
+    return None
