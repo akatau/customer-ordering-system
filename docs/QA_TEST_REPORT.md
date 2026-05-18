@@ -56,3 +56,19 @@ Workaround used: run tests with `DATABASE_URL='sqlite://'` so `app.database` use
 
 - Run frontend tests (separately) and add their results to this report.
 - Create a short QA action list with items prioritised by risk and effort (see `QA_ACTIONS.md`).
+
+## Frontend test attempt
+
+- Attempted to run frontend tests via the `frontend/` package. Installation failed due to dependency resolution conflicts between `vite` and `@vitejs/plugin-react` on the local machine. The `npm ci` step returned an ERESOLVE conflict. Example error:
+
+```
+npm error ERESOLVE could not resolve
+... Could not resolve dependency: peer vite@"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0" from @vitejs/plugin-react@4.7.0
+```
+
+Recommendations:
+
+- Try `npm ci --legacy-peer-deps` or update `package.json` to align `vite` and plugin versions.
+- Run frontend CI in a container or CI runner with a supported Node version and a clean cache to reproduce and fix dependency resolution.
+- If desired, I can open a PR that pins compatible `vite`/plugin versions and attempts a green install in CI.
+
