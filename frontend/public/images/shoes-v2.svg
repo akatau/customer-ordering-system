@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff4df" />
+      <stop offset="100%" stop-color="#f7e3bf" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#bg)" />
+  <path d="M120 258c44 8 96 8 156-8l64-18 40 16 50 2c16 0 28 12 28 28s-12 28-28 28H190c-36 0-70-18-88-48l18 0z" fill="#1f4e79" />
+  <path d="M264 208l54 24" stroke="#ffffff" stroke-width="10" stroke-linecap="round" />
+  <path d="M382 224c38 14 74 18 108 16" stroke="#d1d5db" stroke-width="12" stroke-linecap="round" />
+  <path d="M152 246h150" stroke="#93c5fd" stroke-width="8" stroke-linecap="round" />
+  <ellipse cx="236" cy="330" rx="140" ry="18" fill="#b08968" opacity="0.28" />
+  <text x="22" y="372" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#5a3e36">Running Shoes</text>
+</svg>

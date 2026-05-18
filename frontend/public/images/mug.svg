@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff7e8" />
+      <stop offset="100%" stop-color="#f0dcc0" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#bg)" />
+  <ellipse cx="300" cy="335" rx="150" ry="26" fill="#d5b48c" opacity="0.35" />
+  <rect x="190" y="130" width="170" height="165" rx="24" fill="#ffffff" stroke="#8b5e34" stroke-width="10" />
+  <path d="M360 160c38 0 60 22 60 50s-22 50-60 50" fill="none" stroke="#8b5e34" stroke-width="12" stroke-linecap="round" />
+  <path d="M215 100c12 18 12 36 0 54" fill="none" stroke="#c07a3d" stroke-width="10" stroke-linecap="round" opacity="0.9" />
+  <path d="M255 92c12 20 12 40 0 60" fill="none" stroke="#c07a3d" stroke-width="10" stroke-linecap="round" opacity="0.9" />
+  <path d="M295 100c12 18 12 36 0 54" fill="none" stroke="#c07a3d" stroke-width="10" stroke-linecap="round" opacity="0.9" />
+  <text x="22" y="372" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#5b3c24">Classic Coffee Mug</text>
+</svg>

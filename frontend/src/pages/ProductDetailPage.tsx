@@ -60,7 +60,22 @@ export function ProductDetailPage() {
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
           <Card>
-            <CardMedia component="img" image={selectedProduct.image_url} alt={selectedProduct.name} />
+            <img
+              src={selectedProduct.image_url || ''}
+              alt={selectedProduct.name}
+              onError={(e) => {
+                const t = e.currentTarget as HTMLImageElement
+                t.onerror = null
+                const slug = selectedProduct.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+                t.src = `/images/${slug}.svg`
+                setTimeout(() => {
+                  if (!t.naturalWidth || t.naturalWidth === 0) {
+                    t.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="%23888">Image unavailable</text></svg>'
+                  }
+                }, 200)
+              }}
+              style={{ width: '100%', height: 360, objectFit: 'cover', display: 'block' }}
+            />
             <CardContent>
               <Typography variant="h4" gutterBottom>
                 {selectedProduct.name}

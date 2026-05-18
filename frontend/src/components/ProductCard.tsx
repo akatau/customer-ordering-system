@@ -32,7 +32,42 @@ export function ProductCard({ product }: Props) {
   return (
     <Card>
       <CardActionArea component={RouterLink} to={`/products/${product.id}`}>
-        <CardMedia component="img" height="180" image={product.image_url} alt={product.name} />
+        <Box sx={{ position: 'relative' }}>
+          <img
+            src={product.image_url || ''}
+            alt={product.name}
+            onError={(e) => {
+              const target = e.currentTarget as HTMLImageElement
+              target.onerror = null
+              const slug = product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+              // try local public image first
+              target.src = `/images/${slug}.svg`
+              // later, if that also fails, fallback to inline SVG
+              setTimeout(() => {
+                if (!target.naturalWidth || target.naturalWidth === 0) {
+                  target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="%23888">Image unavailable</text></svg>'
+                }
+              }, 200)
+            }}
+            style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              bgcolor: 'rgba(0,0,0,0.45)',
+              color: 'common.white',
+              py: 1,
+              px: 2,
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ color: 'common.white' }}>
+              {product.name}
+            </Typography>
+          </Box>
+        </Box>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {product.name}

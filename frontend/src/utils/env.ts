@@ -1,6 +1,6 @@
 export const createEnv = (): Record<string, string> => {
   return {
-    API_URL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
+    API_URL: import.meta.env.VITE_API_URL || '/api/v1',
     NODE_ENV: import.meta.env.MODE,
   }
 }

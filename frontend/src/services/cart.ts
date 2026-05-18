@@ -49,7 +49,7 @@ function normalizeCart(response: CartApiResponse): CartSummary {
 
 export const cartService = {
   async getCart(): Promise<CartSummary> {
-    const response = await apiClient.getInstance().get('/cart')
+    const response = await apiClient.getInstance().get('/cart/')
     return normalizeCart(response.data)
   },
 
