@@ -20,6 +20,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useProductsStore } from '@stores/productsStore';
 import { useCartStore } from '@stores/cartStore';
 import { useAuthStore } from '@stores/authStore';
+import ProductReviewSection from '@components/ProductReviewSection';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -160,12 +161,7 @@ const ProductDetailPage: React.FC = () => {
       {/* Reviews Section */}
       <Grid item xs={12}>
         <Divider sx={{ my: 4 }} />
-        <Typography variant="h6" gutterBottom>
-          Customer Reviews
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Reviews will be displayed here. To submit a review, purchase this product first.
-        </Typography>
+        <ProductReviewSection productId={id ?? ''} />
       </Grid>
     </Grid>
   );
