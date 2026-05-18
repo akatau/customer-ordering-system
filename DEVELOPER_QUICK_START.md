@@ -298,6 +298,29 @@ k6 run load-test.js
 git clone <repo>
 cd customer-ordering-system
 nix-shell  # or: source venv/bin/activate
+
+### Running tests locally
+
+Backend (pytest, in-memory SQLite):
+```powershell
+# Use in-memory SQLite to avoid needing PostgreSQL dev headers locally
+$Env:DATABASE_URL='sqlite://'
+cd backend
+d:/darksoulsIII/customer-ordering-system/.venv/Scripts/python.exe -m pytest -q
+```
+
+Frontend (Vitest):
+```powershell
+cd frontend
+# Install deps if needed
+npm ci --legacy-peer-deps
+# Run tests
+npm test
+```
+
+Notes:
+- If `psycopg2` fails to install locally due to missing `pg_config`, prefer running backend tests with `DATABASE_URL='sqlite://'` as shown above.
+- The frontend may require aligning `vite` and `@vitejs/plugin-react` versions; a CI job was added to help verify changes.
 ```
 
 ### 2. Create Your Branch
