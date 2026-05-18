@@ -33,8 +33,12 @@ export function LoginPage() {
   }, [isAuthenticated, from])
 
   const onSubmit = async (data: LoginForm) => {
-    await login(data.email, data.password)
-    clearError()
+    try {
+      await login(data.email, data.password)
+      clearError()
+    } catch {
+      // Error is already stored in the auth state for the alert.
+    }
   }
 
   return (
