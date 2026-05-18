@@ -23,11 +23,22 @@ import CheckoutPage from '@pages/CheckoutPage';
 import OrdersPage from '@pages/OrdersPage';
 import OrderTrackingPage from '@pages/OrderTrackingPage';
 import ProfilePage from '@pages/ProfilePage';
+import AdminDashboardPage from '@pages/AdminDashboardPage';
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { token } = useAuthStore();
   return token ? <>{children}</> : <Navigate to="/login" replace />;
+};
+
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { token, user } = useAuthStore();
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return user?.role === 'admin' ? <>{children}</> : <Navigate to="/" replace />;
 };
 
 // Material-UI theme
@@ -100,6 +111,14 @@ function App() {
                   <ProtectedRoute>
                     <ProfilePage />
                   </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminDashboardPage />
+                  </AdminRoute>
                 }
               />
             </Routes>

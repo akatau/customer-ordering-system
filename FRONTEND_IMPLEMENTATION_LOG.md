@@ -317,5 +317,45 @@
 
 ---
 
+## Sprint 2: Catalog Flow Refinement & Admin Dashboard
+
+### Date: May 18, 2026 - Sprint 2 Kickoff
+
+**Objectives**:
+1. Add debounced search handling for the product catalog
+2. Replace the initial loading spinner with a skeleton grid
+3. Add a backend-backed admin dashboard route
+4. Keep the work aligned to `main-parallel` and the existing backend contracts
+
+**Files Added/Updated**:
+- `frontend/src/hooks/useDebouncedValue.ts` - Reusable debounce helper for controlled inputs
+- `frontend/src/pages/ProductCatalogPage.tsx` - Debounced search, pagination-aware fetching, skeleton loading state
+- `frontend/src/api/admin.ts` - Admin API client for users, orders, and activity logs
+- `frontend/src/pages/AdminDashboardPage.tsx` - Dashboard backed by backend admin endpoints
+- `frontend/src/App.tsx` - Added guarded `/admin` route
+- `frontend/src/types/index.ts` - Added admin list response types
+- `frontend/src/tests/useDebouncedValue.test.tsx` - Focused debounce hook test
+- `frontend/src/tests/AdminDashboardPage.test.tsx` - Backend-backed dashboard test
+
+**Key Decisions**:
+1. Search input is now locally controlled and debounced before it updates store/query fetches
+2. The catalog uses a skeleton grid on first load to improve perceived performance
+3. The admin dashboard reads real backend admin endpoints instead of a mocked placeholder
+4. Route access for `/admin` remains role-aware so the header link does not expose a dead route
+
+**Validation Completed**:
+- `npm.cmd test -- --run src/tests/useDebouncedValue.test.tsx`
+- `npm.cmd test -- --run src/tests/AdminDashboardPage.test.tsx`
+- `npm.cmd test -- --run`
+- `npm.cmd run type-check`
+- `npm.cmd run build`
+
+**Next Follow-Up Items**:
+1. Add a global error boundary around routed pages
+2. Code-split the top-level routes to reduce the initial bundle size warning
+3. Add dedicated admin management subpages if the backend contract expands
+
+---
+
 **Frontend Implementation Started**: May 18, 2026
-**Current Status**: ✅ Core architecture complete, ready for testing and refinement
+**Current Status**: ✅ Core architecture complete, Sprint 2 refinement in progress
