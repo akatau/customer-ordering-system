@@ -391,5 +391,38 @@
 
 ---
 
+## Sprint 4: Validation, Router Cleanup, and Spec Mapping
+
+### Date: May 18, 2026 - Sprint 4 Validation Pass
+
+**Objectives**:
+1. Re-run backend and frontend suites from the current `main-parallel` baseline
+2. Remove the React Router future-flag warnings from the app and test harness
+3. Map the documented Gherkin scenarios to the implemented frontend flows
+4. Record the remaining gaps for the next sprint slice
+
+**Files Updated**:
+- `frontend/src/App.tsx` - Opted into React Router v7 future flags at the app router boundary
+- `frontend/src/tests/AdminDashboardPage.test.tsx` - Added the same future flags to the test router wrapper
+- `FRONTEND_IMPLEMENTATION_LOG.md` - Added Sprint 4 validation notes
+- `docs/FRONTEND_SPRINT_4_NOTES.md` - Added a short spec-compliance and next-sprint checklist
+
+**Validation Completed**:
+- `npm.cmd test -- --run` - Passed, with the router future warnings removed
+- `npm.cmd run build` - Passed and confirmed the lazy-loaded route chunks still build cleanly
+- `d:/darksoulsIII/customer-ordering-system/.venv/Scripts/python.exe -m pytest -q` - Passed (`121 passed`)
+
+**Gherkin Coverage Snapshot**:
+1. Covered in the current frontend/backend implementation: registration, login, browse products, add to cart, checkout, order tracking, and the admin dashboard route
+2. Still missing from the frontend surface: password recovery, review submission/view flows, and discount-code UX
+3. The current app shell is ready for the next sprint to add those missing flows without undoing the route-splitting or error-boundary work
+
+**Next Sprint Target**:
+1. Add the missing Gherkin user flows as frontend pages or route-level interactions
+2. Add focused frontend tests for those flows and keep the backend integration contracts explicit
+3. Continue the incremental validation loop: unit tests, build, then integration checks before merge
+
+---
+
 **Frontend Implementation Started**: May 18, 2026
-**Current Status**: ✅ Core architecture complete, Sprint 3 resilience pass in progress
+**Current Status**: ✅ Core architecture complete, Sprint 4 validation and spec-mapping pass complete

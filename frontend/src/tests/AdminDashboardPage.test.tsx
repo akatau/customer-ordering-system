@@ -68,7 +68,7 @@ describe('AdminDashboardPage', () => {
 
   it('renders backend-backed admin dashboard data', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AdminDashboardPage />
       </MemoryRouter>
     );
