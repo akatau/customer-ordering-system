@@ -54,7 +54,7 @@ class TestLoadHandling:
         """Test product list endpoint with concurrent requests."""
         num_requests = 10
         
-        def make_request():
+        def make_request(_unused=None):
             response = client.get("/api/v1/products/?limit=20")
             return response.status_code == 200
         
@@ -70,7 +70,7 @@ class TestLoadHandling:
         product_id = "load-prod-0"
         num_requests = 20
         
-        def make_request():
+        def make_request(_unused=None):
             response = client.get(f"/api/v1/products/{product_id}")
             return response.status_code == 200
         

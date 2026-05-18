@@ -46,7 +46,7 @@ class ProductService:
         # Try cache first
         cached = cache_manager.get(cache_entry_key)
         if cached:
-            return cached.get("products", []), cached.get("total", 0)
+            return cached.get("products", []), int(cached.get("total") or 0)
         
         # Cache miss - query database
         query = db.query(Product)
@@ -64,7 +64,7 @@ class ProductService:
         if max_price is not None:
             query = query.filter(Product.price <= max_price)
 
-        total = query.count()
+        total = int(query.count() or 0)
         products = query.offset((page - 1) * limit).limit(limit).all()
         product_data = [ProductService._serialize_product(product) for product in products]
         
