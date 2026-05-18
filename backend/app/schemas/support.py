@@ -88,7 +88,7 @@ class TicketList(BaseModel):
 
 class OrderModification(BaseModel):
     """Modify order items or shipping details."""
-    action: str = Field(..., regex="^(add_item|remove_item|change_address)$")
+    action: str = Field(..., pattern="^(add_item|remove_item|change_address)$")
     product_id: Optional[str] = None  # For add/remove item actions
     quantity: Optional[int] = None  # For add item action
     shipping_address: Optional[dict] = None  # For change_address action
@@ -110,6 +110,20 @@ class RefundResponse(BaseModel):
     status: str
     processed_at: datetime
     transaction_id: Optional[str]
+
+
+class OrderModificationResponse(BaseModel):
+    """Response from an order modification action."""
+    order_id: str
+    modifications: dict
+    status: str
+    audit_note: str
+
+
+class ReportExportResponse(BaseModel):
+    """Exported report response."""
+    format: str
+    content: str
 
 
 class SalesReport(BaseModel):
@@ -147,7 +161,7 @@ class CustomerAnalytics(BaseModel):
 
 class ReportExportRequest(BaseModel):
     """Request report export."""
-    format: str = Field(..., regex="^(csv|json|pdf)$")
-    report_type: str = Field(..., regex="^(sales|inventory|customers)$")
-    start_date: datetime
-    end_date: datetime
+    format: str = Field(..., pattern="^(csv|json|pdf)$")
+    report_type: str = Field(..., pattern="^(sales|inventory|customers)$")
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None

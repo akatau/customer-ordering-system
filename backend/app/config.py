@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     app_name: str = "Customer Ordering Sub-system"
     environment: str = "development"
     database_url: str = "postgresql://localhost/customer_ordering_dev"
+    redis_url: str = "redis://localhost:6379/0"
+    celery_broker_url: str = "redis://localhost:6379/0"
+    celery_result_backend: str = "redis://localhost:6379/0"
     secret_key: str = "dev-secret-key-change-in-production"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24

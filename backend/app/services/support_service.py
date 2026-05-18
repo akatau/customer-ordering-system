@@ -6,7 +6,8 @@ from decimal import Decimal
 from sqlalchemy.orm import Session
 
 from ..models.ticket import Ticket, TicketStatus, TicketPriority, TicketCategory
-from ..models.order import Order, OrderStatus
+from ..models.order import Order, OrderStatus, OrderItem
+from ..models.product import Product
 from ..models.user import User
 from ..schemas.support import (
     TicketCreate,
@@ -161,12 +162,13 @@ class RefundService:
         order.updated_at = datetime.utcnow()
         db.commit()
 
+        processed_at = datetime.utcnow()
         return {
             "refund_id": refund_id,
             "order_id": order_id,
             "amount": refund_amount,
             "status": "completed",
-            "processed_at": datetime.utcnow().isoformat(),
+            "processed_at": processed_at,
             "transaction_id": transaction_id,
         }
 
@@ -204,11 +206,55 @@ class OrderModificationService:
                 order.shipping_address = str(modification.shipping_address)
                 modifications["new_address"] = modification.shipping_address
 
-        elif modification.action in ["add_item", "remove_item"]:
-            # These would require additional logic to manipulate OrderItems
-            # Stub for now
+        elif modification.action == "change_address":
+            if modification.shipping_address:
+                order.shipping_address = str(modification.shipping_address)
+                modifications["new_address"] = modification.shipping_address
+
+        elif modification.action == "add_item":
+            if not modification.product_id or modification.quantity is None or modification.quantity <= 0:
+                raise ValueError("product_id and positive quantity are required to add an item")
+
+            product = db.query(Product).filter(Product.id == modification.product_id).first()
+            if not product:
+                raise ValueError("Product not found")
+            if product.stock_quantity < modification.quantity:
+                raise ValueError("Not enough stock to add requested quantity")
+
+            order_item = OrderItem(
+                order_id=order.id,
+                product_id=product.id,
+                product_name=product.name,
+                quantity=modification.quantity,
+                unit_price=product.price,
+                total_price=product.price * modification.quantity,
+            )
+            db.add(order_item)
+            product.stock_quantity -= modification.quantity
+            order.total_amount += product.price * modification.quantity
             modifications["product_id"] = modification.product_id
             modifications["quantity"] = modification.quantity
+
+        elif modification.action == "remove_item":
+            if not modification.product_id:
+                raise ValueError("product_id is required to remove an item")
+
+            order_item = (
+                db.query(OrderItem)
+                .filter(OrderItem.order_id == order.id, OrderItem.product_id == modification.product_id)
+                .first()
+            )
+            if not order_item:
+                raise ValueError("Order item not found")
+
+            order.total_amount -= order_item.total_price
+            product = db.query(Product).filter(Product.id == order_item.product_id).first()
+            if product:
+                product.stock_quantity += int(order_item.quantity)
+
+            db.delete(order_item)
+            modifications["product_id"] = modification.product_id
+            modifications["removed"] = True
 
         order.updated_at = datetime.utcnow()
         db.commit()

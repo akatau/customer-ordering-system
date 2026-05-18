@@ -19,7 +19,14 @@ from ..schemas.admin import (
     BulkImportResponse,
     ExportResponse,
 )
+from ..schemas.support import (
+    OrderModification,
+    RefundRequest,
+    RefundResponse,
+    OrderModificationResponse,
+)
 from ..services.admin_service import AdminService
+from ..services.support_service import OrderModificationService, RefundService
 from .deps import require_admin, require_admin_only
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -166,6 +173,41 @@ def update_order(
     admin_service = AdminService(db)
     order = admin_service.update_order(order_id, update_data, current_admin.id)
     return order
+
+
+@router.put("/orders/{order_id}/modify", response_model=OrderModificationResponse)
+def modify_order(
+    order_id: str,
+    modification_data: OrderModification,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(require_admin),
+):
+    """Modify an order for support or admin users."""
+    try:
+        result = OrderModificationService.modify_order(db, order_id, modification_data, current_admin.id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return OrderModificationResponse(**result)
+
+
+@router.post("/orders/{order_id}/refund", response_model=RefundResponse)
+def refund_order(
+    order_id: str,
+    refund_data: RefundRequest,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(require_admin),
+):
+    """Process a refund for an order."""
+    try:
+        refund_result = RefundService.process_refund(
+            db,
+            order_id=order_id,
+            reason=refund_data.reason,
+            amount=refund_data.amount,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return RefundResponse(**refund_result)
 
 
 @router.get("/orders/{order_id}/invoice", response_model=dict)

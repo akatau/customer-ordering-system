@@ -24,6 +24,7 @@ import app.models.cart as _cart_models  # noqa: F401
 import app.models.order as _order_models  # noqa: F401
 import app.models.review as _review_models  # noqa: F401
 import app.models.admin_log as _admin_log_models  # noqa: F401
+import app.models.ticket as _ticket_models  # noqa: F401
 
 from sqlalchemy import create_engine
 
