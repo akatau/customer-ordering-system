@@ -1,3 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt || true
+      - name: Run backend tests
+        env:
+          DATABASE_URL: sqlite://
+        run: |
+          . .venv/bin/activate
+          python -m pytest backend -q
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install frontend dependencies (legacy-peer-deps)
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm test --silent
 name: Backend CI Pipeline
 
 on:
