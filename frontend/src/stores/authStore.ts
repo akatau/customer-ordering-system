@@ -6,6 +6,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, LoginRequest, RegisterRequest } from '@/types';
 import { authApi } from '@api/auth';
+import { userApi } from '@api/users';
+import { apiClient } from '@api/client';
 
 interface AuthState {
   user: User | null;
@@ -40,13 +42,21 @@ export const useAuthStore = create<AuthState>()(
         }
 
         if (response.data) {
+          apiClient.setToken(response.data.access_token);
+          localStorage.setItem('auth_token', response.data.access_token);
+
+          const profileResponse = await userApi.getProfile();
+          if (profileResponse.error) {
+            set({ isLoading: false, error: profileResponse.error.detail });
+            return false;
+          }
+
           set({
-            user: response.data.user,
+            user: profileResponse.data || null,
             token: response.data.access_token,
             isLoading: false,
             error: null,
           });
-          localStorage.setItem('auth_token', response.data.access_token);
           return true;
         }
 
@@ -63,19 +73,8 @@ export const useAuthStore = create<AuthState>()(
           return false;
         }
 
-        if (response.data) {
-          set({
-            user: response.data.user,
-            token: response.data.access_token,
-            isLoading: false,
-            error: null,
-          });
-          localStorage.setItem('auth_token', response.data.access_token);
-          return true;
-        }
-
-        set({ isLoading: false, error: 'Registration failed' });
-        return false;
+        set({ isLoading: false, error: null });
+        return true;
       },
 
       logout: () => {
@@ -87,6 +86,7 @@ export const useAuthStore = create<AuthState>()(
       clearError: () => set({ error: null }),
 
       setToken: (token: string) => {
+        apiClient.setToken(token);
         set({ token });
         localStorage.setItem('auth_token', token);
       },
@@ -94,6 +94,7 @@ export const useAuthStore = create<AuthState>()(
       loadStoredAuth: () => {
         const token = localStorage.getItem('auth_token');
         if (token) {
+          apiClient.setToken(token);
           set({ token });
         }
       },

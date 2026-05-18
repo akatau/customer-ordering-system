@@ -45,7 +45,7 @@ const ProfilePage: React.FC = () => {
 
   // Profile form state
   const [profileData, setProfileData] = useState({
-    full_name: '',
+    full_name: '' as string | null,
     phone: '',
   });
 

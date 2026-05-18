@@ -310,6 +310,11 @@
 5. Write unit tests for stores
 6. Implement E2E tests
 
+**Integration Update**:
+- Merged latest `main-parallel` backend baseline into `feature/frontend-sprint-1`
+- Aligned frontend auth and registration flows with backend API contracts
+- Verified `yarn build` and `yarn test --run` pass after integration
+
 ---
 
 **Frontend Implementation Started**: May 18, 2026

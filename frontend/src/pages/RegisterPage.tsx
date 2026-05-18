@@ -23,7 +23,8 @@ const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState<RegisterRequest>({
     email: '',
     password: '',
-    name: '',
+    username: '',
+    full_name: '',
   });
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [validationError, setValidationError] = useState('');
@@ -52,7 +53,7 @@ const RegisterPage: React.FC = () => {
 
     const success = await register(formData);
     if (success) {
-      navigate('/');
+      navigate('/login');
     }
   };
 
@@ -69,11 +70,21 @@ const RegisterPage: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Full Name"
-            name="name"
-            value={formData.name}
+            label="Username"
+            name="username"
+            value={formData.username}
             onChange={handleChange}
             required
+            margin="normal"
+            disabled={isLoading}
+          />
+
+          <TextField
+            fullWidth
+            label="Full Name"
+            name="full_name"
+            value={formData.full_name}
+            onChange={handleChange}
             margin="normal"
             disabled={isLoading}
           />

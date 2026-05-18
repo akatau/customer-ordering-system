@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     const success = await login(formData);
     if (success) {
-      navigate('/');
+      navigate('/products');
     }
   };
 
