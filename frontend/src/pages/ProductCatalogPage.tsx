@@ -2,7 +2,7 @@
  * Product catalog page component
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Grid,
   Card,
@@ -17,15 +17,41 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  CircularProgress,
   Alert,
   Pagination,
+  Skeleton,
+  Stack,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useProductsStore } from '@stores/productsStore';
 import { useCartStore } from '@stores/cartStore';
 import { useAuthStore } from '@stores/authStore';
+import useDebouncedValue from '@hooks/useDebouncedValue';
+
+const CatalogSkeleton = () => (
+  <Grid container spacing={3} sx={{ mb: 4 }}>
+    {Array.from({ length: 8 }).map((_, index) => (
+      <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Skeleton variant="rectangular" height={200} />
+          <CardContent sx={{ flexGrow: 1 }}>
+            <Stack spacing={1}>
+              <Skeleton variant="text" height={36} width="80%" />
+              <Skeleton variant="text" height={22} width="95%" />
+              <Skeleton variant="text" height={28} width="40%" />
+              <Skeleton variant="text" height={20} width="50%" />
+            </Stack>
+          </CardContent>
+          <CardActions>
+            <Skeleton variant="rounded" width={96} height={36} />
+            <Skeleton variant="rounded" width={96} height={36} />
+          </CardActions>
+        </Card>
+      </Grid>
+    ))}
+  </Grid>
+);
 
 const ProductCatalogPage: React.FC = () => {
   const {
@@ -34,7 +60,6 @@ const ProductCatalogPage: React.FC = () => {
     error,
     totalPages,
     currentPage,
-    searchQuery,
     fetchProducts,
     setSearchQuery,
     setSelectedCategory,
@@ -45,13 +70,26 @@ const ProductCatalogPage: React.FC = () => {
   const [quantity, setQuantity] = useState<Record<string, number>>({});
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const debouncedSearch = useDebouncedValue(searchInput, 300);
+  const hasHandledDebouncedSearch = useRef(false);
 
   useEffect(() => {
-    fetchProducts(currentPage, searchQuery, categoryFilter);
-  }, [currentPage, searchQuery, categoryFilter, fetchProducts]);
+    fetchProducts(1, '', '');
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    if (!hasHandledDebouncedSearch.current) {
+      hasHandledDebouncedSearch.current = true;
+      return;
+    }
+
+    setSearchQuery(debouncedSearch);
+    fetchProducts(1, debouncedSearch, categoryFilter);
+  }, [categoryFilter, debouncedSearch, fetchProducts, setSearchQuery]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    setSearchInput(e.target.value);
   };
 
   const handleCategoryChange = (e: any) => {
@@ -77,7 +115,7 @@ const ProductCatalogPage: React.FC = () => {
   };
 
   if (isLoading && products.length === 0) {
-    return <CircularProgress sx={{ display: 'block', mx: 'auto' }} />;
+    return <CatalogSkeleton />;
   }
 
   return (
@@ -87,7 +125,7 @@ const ProductCatalogPage: React.FC = () => {
         <TextField
           label="Search products"
           variant="outlined"
-          value={searchQuery}
+          value={searchInput}
           onChange={handleSearch}
           sx={{ flex: 1, minWidth: 200 }}
         />
@@ -169,8 +207,9 @@ const ProductCatalogPage: React.FC = () => {
           count={totalPages}
           page={currentPage}
           onChange={(_, page) => {
-            fetchProducts(page, searchQuery, categoryFilter);
+            fetchProducts(page, debouncedSearch, categoryFilter);
           }}
+          disabled={isLoading}
         />
       </Box>
     </Box>

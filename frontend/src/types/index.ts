@@ -137,6 +137,49 @@ export interface UserProfile {
   updated_at: string;
 }
 
+export interface AdminUser {
+  id: string;
+  email: string;
+  username: string;
+  full_name: string | null;
+  role: 'customer' | 'admin' | 'support';
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminUserListResponse {
+  users: AdminUser[];
+}
+
+export interface AdminOrder {
+  id: string;
+  user_id: string;
+  status: string;
+  total_amount: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminOrderListResponse {
+  orders: AdminOrder[];
+}
+
+export interface AdminLog {
+  id: string;
+  admin_user_id: string;
+  action: string;
+  resource_type: string;
+  resource_id: string | null;
+  details: Record<string, unknown> | null;
+  ip_address: string | null;
+  timestamp: string;
+}
+
+export interface AdminLogListResponse {
+  logs: AdminLog[];
+}
+
 // API error type
 export interface ApiError {
   detail: string;
