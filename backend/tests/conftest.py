@@ -54,6 +54,12 @@ def db():
 
 
 @pytest.fixture(scope="function")
+def db_session(db):
+    """Alias fixture for tests expecting db_session."""
+    return db
+
+
+@pytest.fixture(scope="function")
 def client(db):
     """Test client that uses the transactional test database."""
     def override_get_db():

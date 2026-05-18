@@ -14,16 +14,20 @@ import json
 from decimal import Decimal
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from fastapi.testclient import TestClient
 from app.main import app
 from app.core.cache import cache_manager, cache_key, CACHE_PATTERNS, invalidate_products
+
+
+@pytest.fixture(autouse=True)
+def inject_client(client):
+    globals()["client"] = client
+    yield
 from app.utils.performance import pagination, paginate_query
 from app.models.product import Product
 from app.models.order import Order, OrderStatus
 from app.models.user import User
 
 
-client = TestClient(app)
 
 
 # =====================================================================
@@ -444,7 +448,8 @@ class TestPaymentFlowIntegration:
         self.user = User(
             id="user-1",
             email="integration@test.com",
-            hashed_password="hashedpass",
+            username="integration_test",
+            password_hash="hashedpass",
             full_name="Integration Test",
         )
         
@@ -530,6 +535,21 @@ class TestPerformanceMonitoring:
 
 class TestCacheConsistency:
     """Test cache consistency and invalidation."""
+
+    @pytest.fixture(autouse=True)
+    def setup(self, db_session):
+        self.product = Product(
+            id="prod-1",
+            name="Laptop",
+            description="High-performance laptop",
+            category="Electronics",
+            price=Decimal("1299.99"),
+            stock_quantity=10,
+            image_url="https://example.com/laptop.jpg",
+        )
+        db_session.add(self.product)
+        db_session.commit()
+        invalidate_products()
 
     def test_cache_invalidation_patterns(self):
         """Test cache invalidation using patterns."""

@@ -9,6 +9,20 @@ from ..core.cache import cache_manager, cache_key, invalidate_products, CACHE_PA
 
 class ProductService:
     @staticmethod
+    def _serialize_product(product: Product) -> dict:
+        return {
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "category": product.category,
+            "image_url": product.image_url,
+            "price": product.price,
+            "stock_quantity": int(product.stock_quantity),
+            "created_at": product.created_at,
+            "updated_at": product.updated_at,
+        }
+
+    @staticmethod
     def list_products(
         db: Session,
         page: int = 1,
@@ -17,7 +31,7 @@ class ProductService:
         category: str | None = None,
         min_price: Decimal | None = None,
         max_price: Decimal | None = None,
-    ) -> tuple[List[Product], int]:
+    ) -> tuple[List[dict], int]:
         # Generate cache key from search parameters (Week 7 caching)
         cache_entry_key = cache_key(
             "products:list",
@@ -52,18 +66,19 @@ class ProductService:
 
         total = query.count()
         products = query.offset((page - 1) * limit).limit(limit).all()
+        product_data = [ProductService._serialize_product(product) for product in products]
         
         # Store in cache (1 hour TTL for product catalog)
         cache_manager.set(
             cache_entry_key,
-            {"products": products, "total": total},
+            {"products": product_data, "total": total},
             cache_type="product_catalog"
         )
         
-        return products, total
+        return product_data, total
 
     @staticmethod
-    def get_product(db: Session, product_id: str) -> Product | None:
+    def get_product(db: Session, product_id: str) -> dict | None:
         # Generate cache key (Week 7 caching)
         cache_entry_key = cache_key("products:detail", product_id)
         
@@ -77,15 +92,17 @@ class ProductService:
         
         # Store in cache (1 hour TTL for product details)
         if product:
-            cache_manager.set(cache_entry_key, product, cache_type="product_catalog")
+            product_data = ProductService._serialize_product(product)
+            cache_manager.set(cache_entry_key, product_data, cache_type="product_catalog")
+            return product_data
         
-        return product
+        return None
 
     @staticmethod
-    def create_product(db: Session, payload: Product) -> Product:
+    def create_product(db: Session, payload: Product) -> dict:
         db.add(payload)
         db.commit()
         db.refresh(payload)
         # Invalidate product caches when new product is created (Week 7 cache invalidation)
         invalidate_products()
-        return payload
+        return ProductService._serialize_product(payload)

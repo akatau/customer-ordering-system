@@ -14,12 +14,14 @@ import time
 import concurrent.futures
 from decimal import Decimal
 from app.main import app
-from fastapi.testclient import TestClient
 from app.models.product import Product
 from app.core.cache import cache_manager, invalidate_products
 
 
-client = TestClient(app)
+@pytest.fixture(autouse=True)
+def inject_client(client):
+    globals()["client"] = client
+    yield
 
 
 # =====================================================================

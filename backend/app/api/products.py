@@ -6,6 +6,7 @@ from ..api.deps import get_db
 from ..schemas.product import ProductCreate, ProductListResponse, ProductRead
 from ..models.product import Product
 from ..services.product_service import ProductService
+from ..utils.performance import pagination
 
 router = APIRouter(tags=["Products"])
 
@@ -14,12 +15,13 @@ router = APIRouter(tags=["Products"])
 def list_products(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1),
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(20, ge=1),
     q: str | None = Query(None, description="Search query for product name or description"),
     category: str | None = Query(None, description="Filter by category"),
     min_price: Decimal | None = Query(None, description="Minimum product price"),
     max_price: Decimal | None = Query(None, description="Maximum product price"),
 ) -> ProductListResponse:
+    limit = pagination.validate_page_size(limit)
     products, total = ProductService.list_products(
         db, page=page, limit=limit, q=q, category=category, min_price=min_price, max_price=max_price
     )
@@ -43,4 +45,5 @@ def create_product(payload: ProductCreate, db: Session = Depends(get_db)) -> Pro
         price=payload.price,
         stock_quantity=payload.stock_quantity,
     )
-    return ProductService.create_product(db, product)
+    created_product = ProductService.create_product(db, product)
+    return created_product
