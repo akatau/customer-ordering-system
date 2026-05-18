@@ -357,5 +357,39 @@
 
 ---
 
+## Sprint 3: Route Resilience & Bundle Splitting
+
+### Date: May 18, 2026 - Sprint 3 Kickoff
+
+**Objectives**:
+1. Add a global error boundary around the routed application shell
+2. Split routed pages with `React.lazy` and `Suspense`
+3. Keep the app smoke test and production build green after the route split
+4. Preserve the existing backend integration and admin guard behavior
+
+**Files Added/Updated**:
+- `frontend/src/components/AppErrorBoundary.tsx` - Global render fallback for route and shell errors
+- `frontend/src/App.tsx` - Lazy-loaded routes with a skeleton fallback
+- `frontend/src/tests/App.test.tsx` - Updated smoke test to wait for lazy-loaded header render
+
+**Key Decisions**:
+1. The shell stays eager-loaded so navigation and authentication stay available even while a route chunk resolves
+2. Every page route is lazy-loaded to reduce the initial bundle surface and keep the app aligned with the optimization guidance
+3. The error boundary uses a simple recover-and-reload UX instead of trying to paper over render errors inside individual routes
+4. Validation remains incremental: smoke test first, then full test suite, then type-check and build
+
+**Validation Completed**:
+- `npm.cmd test -- --run src/tests/App.test.tsx`
+- `npm.cmd test -- --run`
+- `npm.cmd run type-check`
+- `npm.cmd run build`
+
+**Carry-Forward Notes**:
+1. The React Router v7 future-flag warnings still appear in tests and should be handled deliberately in a later pass
+2. Additional route-level skeletons can be introduced later if specific pages need richer placeholders
+3. If backend contract growth adds more admin screens, keep them lazy-loaded under the same shell pattern
+
+---
+
 **Frontend Implementation Started**: May 18, 2026
-**Current Status**: ✅ Core architecture complete, Sprint 2 refinement in progress
+**Current Status**: ✅ Core architecture complete, Sprint 3 resilience pass in progress
